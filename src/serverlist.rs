@@ -48,7 +48,9 @@ impl DiscoverOptions {
 #[derive(Debug, Clone)]
 pub struct ServerList {
     servers: Arc<Mutex<Cycle<IntoIter<SocketAddr>>>>,
+    servers_count: usize,
     ws_servers: Arc<Mutex<Cycle<IntoIter<String>>>>,
+    ws_servers_count: usize,
 }
 
 impl ServerList {
@@ -92,6 +94,10 @@ impl ServerList {
         addr
     }
 
+    pub fn servers(&self) -> usize {
+        self.servers_count
+    }
+
     /// Pick a WebSocket server from the server list, rotating them in a round-robin way for reconnects.
     ///
     /// # Returns
@@ -101,6 +107,10 @@ impl ServerList {
         let addr = self.ws_servers.lock().unwrap().next().unwrap();
         debug!(addr = ?addr, "picked websocket server from list");
         format!("wss://{addr}/cmsocket/")
+    }
+
+    pub fn ws_servers(&self) -> usize {
+        self.ws_servers_count
     }
 }
 
@@ -113,9 +123,14 @@ impl From<ServerListResponse> for ServerList {
         servers.shuffle(&mut thread_rng());
         ws_servers.shuffle(&mut thread_rng());
 
+        let servers_count = servers.len();
+        let ws_servers_count = ws_servers.len();
+
         ServerList {
             servers: Arc::new(Mutex::new(servers.into_iter().cycle())),
+            servers_count,
             ws_servers: Arc::new(Mutex::new(ws_servers.into_iter().cycle())),
+            ws_servers_count,
         }
     }
 }
