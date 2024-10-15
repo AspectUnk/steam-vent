@@ -36,6 +36,8 @@ pub enum NetworkError {
     MalformedBody(#[from] MalformedBody),
     #[error("Crypto error: {0}")]
     CryptoError(#[from] CryptError),
+    #[error("TLS error: {0}")]
+    TlsError(#[from] native_tls::Error),
     #[error("Unexpected end of stream")]
     EOF,
     #[error("Response timed out")]

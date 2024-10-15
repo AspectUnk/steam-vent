@@ -11,12 +11,11 @@ rust-version = "1.75.0"
 [dependencies]
 steam-vent-proto = { version = "0.5", path = "./protobuf" }
 steam-vent-crypto = { version = "0.2", path = "./crypto" }
-tokio = { version = "1.39.3", features = ["net", "io-util", "macros"] }
+tokio = { version = "1.39.3", features = ["net", "io-util", "io-std", "macros"] }
 tokio-util = { version = "0.7.11", features = ["codec"] }
 tokio-stream = { version = "0.1.15", features = ["sync"] }
-tokio-tungstenite = { version = "0.23.1", features = ["rustls-tls-webpki-roots"] }
-rustls = "0.23.12"
-webpki-roots = "0.26.3"
+tokio-tungstenite = { version = "0.23.1", features = ["native-tls"] }
+native-tls = "0.2"
 binread = "2.2.0"
 binwrite = "0.2.1"
 thiserror = "1.0.63"
