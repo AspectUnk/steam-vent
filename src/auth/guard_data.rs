@@ -12,14 +12,14 @@ pub trait GuardDataStore {
 
     /// Store a machine token for an account
     fn store(
-        &mut self,
+        &self,
         account: &str,
         machine_token: String,
     ) -> impl std::future::Future<Output = Result<(), Self::Err>> + Send;
 
     /// Retrieve the stored token for an account
     fn load(
-        &mut self,
+        &self,
         account: &str,
     ) -> impl std::future::Future<Output = Result<Option<String>, Self::Err>> + Send;
 }
@@ -104,7 +104,7 @@ impl FileGuardDataStore {
 impl GuardDataStore for FileGuardDataStore {
     type Err = FileStoreError;
 
-    async fn store(&mut self, account: &str, machine_token: String) -> Result<(), Self::Err> {
+    async fn store(&self, account: &str, machine_token: String) -> Result<(), Self::Err> {
         if !machine_token.is_empty() {
             let mut tokens = self.all_tokens()?;
             tokens.insert(account.into(), machine_token);
@@ -114,7 +114,7 @@ impl GuardDataStore for FileGuardDataStore {
         }
     }
 
-    async fn load(&mut self, account: &str) -> Result<Option<String>, Self::Err> {
+    async fn load(&self, account: &str) -> Result<Option<String>, Self::Err> {
         let mut tokens = self.all_tokens()?;
         Ok(tokens.remove(account).filter(|token| !token.is_empty()))
     }
@@ -126,11 +126,11 @@ pub struct NullGuardDataStore;
 impl GuardDataStore for NullGuardDataStore {
     type Err = Infallible;
 
-    async fn store(&mut self, _account: &str, _machine_token: String) -> Result<(), Self::Err> {
+    async fn store(&self, _account: &str, _machine_token: String) -> Result<(), Self::Err> {
         Ok(())
     }
 
-    async fn load(&mut self, _account: &str) -> Result<Option<String>, Self::Err> {
+    async fn load(&self, _account: &str) -> Result<Option<String>, Self::Err> {
         Ok(None)
     }
 }
