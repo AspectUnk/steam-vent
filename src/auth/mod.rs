@@ -61,7 +61,7 @@ impl AuthData {
     pub async fn with_guard<G: GuardDataStore>(
         account: &str,
         password: &str,
-        guard_data_store: &mut G,
+        guard_data_store: &G,
     ) -> Self {
         let mut data = Self::new(account, password);
         data.is_persistent = true;
